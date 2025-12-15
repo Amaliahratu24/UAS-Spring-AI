@@ -9,7 +9,6 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* TEMA AQUA GRADIENT */
             background: linear-gradient(135deg, #E0F7FA 0%, #4DD0E1 100%);
             height: 100vh;
             display: flex;
@@ -32,7 +31,6 @@
         }
 
         .chat-header {
-            /* HEADER AQUA LEBIH GELAP DIKIT */
             background: linear-gradient(135deg, #00ACC1 0%, #00838F 100%);
             color: white;
             padding: 20px;
@@ -47,7 +45,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 25px;
-            background: #F0F4F8; /* Abu sangat muda */
+            background: #F0F4F8; 
         }
 
         .message {
@@ -72,7 +70,7 @@
         }
 
         .message.user .message-label { text-align: right; color: #00838F; }
-        .message.assistant .message-label { color: #F9A825; /* Kuning tua utk label */ }
+        .message.assistant .message-label { color: #F9A825; }
 
         .message-content {
             padding: 15px 20px;
@@ -82,14 +80,12 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* STYLE BUBBLE USER (AQUA) */
         .message.user .message-content {
             background: linear-gradient(135deg, #26C6DA 0%, #00BCD4 100%);
             color: white;
             border-bottom-right-radius: 4px;
         }
 
-        /* STYLE BUBBLE AI (SOFT YELLOW) */
         .message.assistant .message-content {
             background: #FFFFE0; /* Light Yellow */
             color: #444;
@@ -97,7 +93,6 @@
             border-bottom-left-radius: 4px;
         }
         
-        /* Agar list dan bold dari AI terbaca rapi */
         .message.assistant .message-content ul { margin-left: 20px; margin-top: 10px; }
         .message.assistant .message-content li { margin-bottom: 5px; }
 
@@ -142,7 +137,6 @@
             box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.1);
         }
 
-        /* TOMBOL KIRIM (AQUA) */
         .send-btn {
             padding: 0 30px;
             border: none;
@@ -155,7 +149,6 @@
         }
         .send-btn:hover { transform: translateY(-2px); }
 
-        /* TOMBOL CLEAR (KUNING ORANGE SOFT) */
         .clear-btn {
             width: 100%;
             padding: 10px;
@@ -254,4 +247,5 @@
         };
     </script>
 </body>
+
 </html>
