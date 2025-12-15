@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Recruitment - CV Analyzer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* TEMA AQUA GRADIENT */
+            background: linear-gradient(135deg, #E0F7FA 0%, #4DD0E1 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 139, 139, 0.2);
+            width: 100%;
+            max-width: 900px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #B2EBF2;
+        }
+
+        .chat-header {
+            /* HEADER AQUA LEBIH GELAP DIKIT */
+            background: linear-gradient(135deg, #00ACC1 0%, #00838F 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-header h1 { font-size: 1.8em; margin-bottom: 5px; }
+        .chat-header p { font-size: 0.9em; opacity: 0.9; color: #E0F7FA; }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+            background: #F0F4F8; /* Abu sangat muda */
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user { justify-content: flex-end; }
+        
+        .message-bubble { display: flex; flex-direction: column; max-width: 80%; }
+
+        .message-label {
+            font-size: 0.75em;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
+        .message.user .message-label { text-align: right; color: #00838F; }
+        .message.assistant .message-label { color: #F9A825; /* Kuning tua utk label */ }
+
+        .message-content {
+            padding: 15px 20px;
+            border-radius: 18px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* STYLE BUBBLE USER (AQUA) */
+        .message.user .message-content {
+            background: linear-gradient(135deg, #26C6DA 0%, #00BCD4 100%);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* STYLE BUBBLE AI (SOFT YELLOW) */
+        .message.assistant .message-content {
+            background: #FFFFE0; /* Light Yellow */
+            color: #444;
+            border: 1px solid #FFF59D;
+            border-bottom-left-radius: 4px;
+        }
+        
+        /* Agar list dan bold dari AI terbaca rapi */
+        .message.assistant .message-content ul { margin-left: 20px; margin-top: 10px; }
+        .message.assistant .message-content li { margin-bottom: 5px; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #78909C;
+        }
+        .empty-state h2 { color: #00ACC1; margin-bottom: 10px; }
+        
+        .suggestions {
+            background: #E0F7FA;
+            padding: 20px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .suggestions li { list-style: none; margin: 8px 0; color: #006064; }
+        .suggestions li:before { content: "📋 "; margin-right: 5px; }
+
+        .chat-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #E0F2F1;
+        }
+
+        .input-form { display: flex; gap: 10px; margin-bottom: 10px; }
+        .input-wrapper { flex: 1; }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #B2EBF2;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #00BCD4;
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.1);
+        }
+
+        /* TOMBOL KIRIM (AQUA) */
+        .send-btn {
+            padding: 0 30px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #26C6DA 0%, #00ACC1 100%);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .send-btn:hover { transform: translateY(-2px); }
+
+        /* TOMBOL CLEAR (KUNING ORANGE SOFT) */
+        .clear-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: #FFF176;
+            color: #F57F17;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .clear-btn:hover { background: #FFEE58; }
+
+        .loading-indicator {
+            text-align: center; color: #00ACC1; font-style: italic; display: none; margin-bottom: 10px;
+        }
+        .loading-indicator.active { display: block; }
+
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>👔 HR CV Analyzer</h1>
+            <p>Smart Recruitment Assistant Powered by Spring AI</p>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div th:if="${#lists.isEmpty(messages)}" class="empty-state">
+                <h2>👋 Halo, HR Manager!</h2>
+                <p>Silakan tempel (paste) teks CV pelamar di bawah untuk dianalisis.</p>
+                
+                <div class="suggestions">
+                    <h3>Contoh Input:</h3>
+                    <ul>
+                        <li>"Nama: Budi, Skill: Java, Spring Boot, Pengalaman 2 tahun..."</li>
+                        <li>"Fresh graduate jurusan SI, IPK 3.8, bisa HTML CSS..."</li>
+                        <li>"Pelamar posisi Senior Backend, pengalaman 5 tahun di Gojek..."</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div th:each="msg : ${messages}" th:class="${'message ' + msg.type}">
+                <div class="message-bubble">
+                    <div class="message-label" 
+                         th:text="${msg.type == 'user' ? 'Kandidat/User' : (msg.type == 'error' ? '⚠️ Error' : '🤖 HR Assistant')}">
+                    </div>
+                    
+                    <div class="message-content" th:utext="${msg.content}"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <div class="loading-indicator" id="loadingIndicator">
+                ⏳ Menganalisis Profil Kandidat...
+            </div>
+            
+            <form method="post" action="/chat/send" class="input-form" id="chatForm">
+                <div class="input-wrapper">
+                    <input type="text" id="messageInput" name="message" 
+                           placeholder="Tempel ringkasan CV / Profil pelamar di sini..." 
+                           required autocomplete="off">
+                </div>
+                <button type="submit" class="send-btn" id="sendBtn">🔍 Analisis</button>
+            </form>
+            
+            <form method="post" action="/chat/clear" onsubmit="return confirm('Hapus riwayat analisis?');">
+                <button type="submit" class="clear-btn">🗑️ Reset Sesi Interview</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function scrollToBottom() {
+            const chatMessages = document.querySelector('.chat-messages');
+            if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function showLoading() {
+            document.getElementById('loadingIndicator').classList.add('active');
+            const btn = document.getElementById('sendBtn');
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+        }
+
+        window.onload = function() {
+            scrollToBottom();
+            document.getElementById('messageInput').focus();
+            
+            const chatMessages = document.querySelector('.chat-messages');
+            if (chatMessages) {
+                new MutationObserver(scrollToBottom).observe(chatMessages, { childList: true, subtree: true });
+            }
+            
+            document.getElementById('chatForm').addEventListener('submit', showLoading);
+        };
+    </script>
+</body>
+</html>
