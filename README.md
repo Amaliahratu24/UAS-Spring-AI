@@ -15,7 +15,7 @@ Rizal Broer Bahaweres, M.Kom.
 
 Repository ini berisi **2 project Spring AI** yang dikembangkan sebagai bagian dari tugas akhir semester:
 1. **springai-helloworld** - REST API sederhana untuk belajar Spring Boot
-2. **HR CV Analyzer** - AI-powered recruitment assistant dengan Groq LLaMA
+2. **springai-CVanalyzer** - AI-powered recruitment assistant dengan Groq LLaMA
 
 ---
 
